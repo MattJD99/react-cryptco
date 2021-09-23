@@ -1,0 +1,129 @@
+function Form() {
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
+
+  //since the id values are the same as the keys in formData, we can write an abstract setFormData here
+  function handleChange(event) {
+    setFormData({
+      ...formData,
+      [event.target.id]: event.target.value,
+    });
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        id="username"
+        value={formData.username}
+        onChange={handleChange}
+      />
+      <input
+        type="text"
+        id="password"
+        value={formData.password}
+        onChange={handleChange}
+      />
+    </form>
+  );
+}
+
+function handleSubmit(event) {
+    event.preventDefault();
+    fetch("the server URL", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+  }
+
+  import { useHistory } from "react-router-dom";
+
+  function NavBar({ onLogout }) {
+    const history = useHistory();
+  
+    function handleClick() {
+      // logout the user
+      onLogout();
+      // then navigate them to the login page
+      history.push("/login");
+    }
+  
+    return (
+      <nav>
+        <button onClick={handleClick}>Logout</button>
+      </nav>
+    );
+  }
+
+  By calling history.push(), we can effectively navigate the user to a new page in response to any event in our application, not just when the user clicks a link!
+
+  For another example, here's how you could use history.push() to redirect the user after logging in:
+  
+  function Login({ onLogin }) {
+    const [formData, setFormData] = useState({
+      username: "",
+      password: "",
+    });
+  
+    function handleChange(e) {
+      setFormData({
+        ...formData,
+        [e.target.name]: e.target.value,
+      });
+    }
+  
+    function handleSubmit(e) {
+      e.preventDefault();
+      fetch("http://localhost:3001/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
+        .then((r) => r.json())
+        .then((user) => {
+          onLogin(user);
+          // after logging the user in, redirect to the home page!
+          history.push("/home");
+        });
+    }
+  
+    return (
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          name="username"
+          value={formData.username}
+          onChange={handleChange}
+        />
+        <input
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+        />
+        <button type="submit">Login</button>
+      </form>
+    );
+  }
+
+  In addition to the useHistory hook, React Router also provides a special component for redirecting users to a new location: the Redirect component. This component is particularly useful in cases where you need to handle some conditional rendering. For example:
+
+function Home({ isSignedIn }) {
+  // if the user isn't signed in, redirect them to the login page
+  if (!isSignedIn) return <Redirect to="/login" />;
+
+  // otherwise, return the home page
+  return (
+    <div>
+      <h1>Home!</h1>
+    </div>
+  );
+}
+
