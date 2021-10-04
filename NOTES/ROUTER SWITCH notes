@@ -1,9 +1,9 @@
-// import React, { useState } from "react";
-// import { Switch, Route } from "react-router-dom";
-// import NavBar from "./NavBar";
-// import Home from "./Home";
-// import About from "./About";
-// import ProjectList from "./ProjectList";
+import React, { useState } from "react";
+import { Switch, Route } from "react-router-dom";
+import NavBar from "./NavBar";
+import Home from "./Home";
+import About from "./About";
+import ProjectList from "./ProjectList";
 
 /*
 Client Side Routing

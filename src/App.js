@@ -1,52 +1,52 @@
 import React, {useState, useEffect} from "react";
-// import Fetch from "./Fetch";
+import { Router, Switch } from 'react-router-dom';
 import './App.css';
+import Search from "./Search";
 import Coin from "./Coin";
+import NavBar from "./NavBar";
+import Favorites from "./Favorites";
+import Home from "./Home"
 
 function App() {
 
   const [coins, setCoins] = useState([])
-  const [search, setSearch] = useState('')
-
+  
   useEffect(() => {
     fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false")
     .then(response => response.json())
-    // .then(data => console.log(data))
     .then(data => setCoins(data))
-    .catch(error => console.log(error))  
+    .then(coins.map(coin => {
+      key=coin.id,
+      name=coin.name,
+      price=coin.current_price,
+      image=coin.image,
+      symbol=coin.symbol,
+      priceChange=coin.price_change_percentage_24h,
+      marketCap=coin.market_cap
+    }))
   }, [])
-
-  const handleChange = event => {
-    setSearch(event.target.value)
-  }
-
-  const filteredCoins = coins.filter(coin =>
-    coin.name.toLowerCase().includes(search.toLowerCase())
-  )
 
   return (
     <div className="App">
-      <div className="coin-search">
-        <h1 className="coin-text">Search a Currency</h1>
-          <form>
-            <input className="coin-input" type="text" placeholder="Search"
-            onChange={handleChange}/>
-          </form>
-      </div>
-      {filteredCoins.map(coin => {
-        return (
+      <NavBar />
+      <Switch> 
+        <Router>
+          <Search coins={coins} />
+        </Router>
+        <Router exact path="/Coin">
           <Coin 
-          key={coin.id}
-          name={coin.name}
-          price={coin.price}
-          image={coin.image}
-          symbol={coin.symbol}
-          volume={coin.total_volume}
-          priceChange={coin.price_change_percentage_24h}
-          marketCap={coin.market_cap}
-          />
-        )
-      })}
+            key={key}
+            name={name}
+            price={price}
+            image={image}
+            symbol={symbol}
+            priceChange={priceChange}
+            marketCap={marketCap} />
+        </Router>
+        <Router exact path="/">
+          <Home />
+        </Router>
+      </Switch>
     </div>
   );
 }
